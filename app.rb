@@ -73,7 +73,7 @@ class App < Sinatra::Base
       %input{:type => :file, :name => :file}
       %input{:type => :submit}
     BO
-    haml html)
+    haml html
   end
 
   post "/compile" do

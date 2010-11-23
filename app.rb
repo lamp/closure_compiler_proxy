@@ -59,7 +59,7 @@ class App < Sinatra::Base
     Ohm.connect
   end
 
-  aget "/" do
+  get "/" do
     html =  <<-BO
 !!! 5
 %html
@@ -73,10 +73,10 @@ class App < Sinatra::Base
       %input{:type => :file, :name => :file}
       %input{:type => :submit}
     BO
-    body(haml html)
+    haml html)
   end
 
-  apost "/compile" do
+  post "/compile" do
     contents = params[:file][:tempfile].read
     hash = sha_file(contents.dup)
     localpath, remote_path = "#{ROOT}/public/tmp/#{hash}.js", "http://hoxtonites.com/tmp/#{hash}.js"

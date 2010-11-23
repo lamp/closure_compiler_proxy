@@ -1,0 +1,12 @@
+source "http://rubygems.org"
+
+gem "thin"
+gem "bundler"
+gem "sinatra"
+gem "eventmachine"
+gem "async_sinatra", :require => "sinatra/async"
+gem "ohm"
+gem "haml"
+gem "ruby-hmac"
+gem "uuid"
+gem "json"

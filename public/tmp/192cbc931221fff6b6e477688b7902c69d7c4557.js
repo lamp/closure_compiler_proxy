@@ -1,0 +1,1 @@
+var net=require("net");net.createServer(function(a){a.setEncoding("utf8");a.addListener("connect",function(){a.write("Echo server\r\n")});a.addListener("data",function(b){a.write(b)});a.addListener("end",function(){a.end()})}).listen(8124,"127.0.0.1");

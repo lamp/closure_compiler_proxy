@@ -4,9 +4,11 @@ EM.next_tick do
   
   EM.add_periodic_timer 20 do
     $jobs = Job.all
-    timestamp = Time.now.to_i.to_s
+    timestamp = Time.now.to_i
+    $complete = {}
     $jobs.each do |job|
-      job.delete if job.completion_time < timestamp - 120
+      job.delete and next if job.completion_time.to_i < (timestamp - 120) and job.state == "completed"
+      $complete[job.uuid] = "complete"
     end
   end
   
@@ -79,18 +81,27 @@ class App < Sinatra::Base
   post "/compile" do
     contents = params[:file][:tempfile].read
     hash = sha_file(contents.dup)
+    
+    job = Job.create :uuid => hash, :state => "pending"
+    
     localpath, remote_path = "#{ROOT}/public/tmp/#{hash}.js", "http://hoxtonites.com/tmp/#{hash}.js"
     File.open(localpath, 'w+') do |f|
       f.print contents
       f.close
       Closure.compile remote_path do |response|
-        body JSON.generate({:content => response.body})
+        File.open(localpath, "w+") do |f|
+          f.print response.body
+          f.close
+        end
+        job.update_attributes :completion_time => Time.now.to_i.to_s, :state => "completed"
+        job.save
+        body JSON.generate({:content => response.body, :filename => remote_path})
       end
     end
   end
   
   def not_found
-    "FOOOOBARRRR"
+    "404"
   end
   
 end
